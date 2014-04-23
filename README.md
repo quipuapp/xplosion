@@ -32,49 +32,17 @@ Imagine you want to create a workbook with a single worksheet with your contacts
 
 Xplosion have 4 methods:
 
-- xls_workbook: this method initialize the main workbook container in which will live worksheets and other elements.
-- xls_worhsheet(name): this method declares the worksheet as insert a name on it. You can declare as many worksheets as you want. (see later examples)
-- xls_row: this method declares the start of a new row
-- xls_cell: this method declares the content of a particular cell
+    xls_workbook #this method initialize the main workbook container in which will live worksheets and other elements.
+    xls_worhsheet(name) #this method declares the worksheet as insert a name on it. You can declare as many worksheets as you want. (see later examples)
+    xls_row #this method declares the start of a new row
+    xls_cell(data) #this method declares the content of a particular cell
 
-First, create a folder 'decorators' on app folder, and name it with the name of the controller from which you want to  call it, in my case 'contact_decorator.rb'. So you'll have something like this:
+Examples
+--------
 
-    app/decorators/contact_decorator.rb
-    
-Inside it you have to declare your methods like this:
+SINGLE WORKSHEET:
 
-    #inside contact_decorator.rb
-    class ContactDecorator < ApplicationDecorator
-      class << self
-      
-        def to_spreadsheet(contacts)
-          # Column names
-          column_names = ['name', 'cif, 'address', 'town', 'country', 'phone', 'email']
-            
-          # Contacts' data
-          contacts_data = []
-          contacts.each do |contact|
-            contacts_data << contact_data_for(contact)
-          end
-          { column_names: column_names, contacts_data: contacts_data }
-        end
-        
-        def contact_data_for(contact)
-        [
-          contact.name,
-          contact.cif,
-          contact.address, 
-          contact.town,
-          contact.country,
-          contact.phone,
-          contact.email,
-        ]
-        end
-      end
-    end
-
-
-Once you have it, go to the controller and add the next to your respond_to section of your desired action (e.g. index)
+First, go to the controller and add the next to your respond_to section of your desired action (e.g. index), and some aditional methods that they may help defining the attributes you want to use:
 
     #inside contacts_controller.rb
     def index
@@ -82,10 +50,36 @@ Once you have it, go to the controller and add the next to your respond_to secti
      respond_to do |format|
        format.html
        format.xls do
-          @spreadsheet_data = ContactDecorator.to_spreadsheet(@contacts)
+          @spreadsheet_data = to_spreadsheet(@contacts)
           render 'app/views/contacts/index' #or your prefered view path
        end
      end
+    end
+
+    # private methods to define attributes you want to display
+    private
+    def to_spreadsheet(contacts)
+      # Column names
+      column_names = ['name', 'cif, 'address', 'town', 'country', 'phone', 'email']
+            
+      # Contacts' data
+      contacts_data = []
+      contacts.each do |contact|
+        contacts_data << contact_data_for(contact)
+      end
+      { column_names: column_names, contacts_data: contacts_data }
+    end
+        
+    def contact_data_for(contact)
+    [
+      contact.name,
+      contact.cif,
+      contact.address, 
+      contact.town,
+      contact.country,
+      contact.phone,
+      contact.email,
+    ]
     end
     
 Ok! Now is when the magic starts!
@@ -119,4 +113,40 @@ Now you have to put a link in your index.html.erb or index.html.slim or whatever
     
 And that's it!
 
-Have fun!
+MULTIPLE WORKSHEETS:
+
+Is as easy as define new contents and redefine the index.xls.builder like this:
+
+    #inside index.xls.builder
+    xls_workbook(xml) do #xml is the default xml builder object
+      xls_worksheet 'Contacts' do
+        xls_row do
+          @spreadsheet_data[:column_names].each do |column_name|
+          xls_cell(column_name)
+        end
+      end
+      @spreadsheet_data[:contacts_data].each do |contact_data|
+        xls_row do
+          contact_data.each do |data|
+            xls_cell(data)
+          end
+        end
+      end
+      
+      xls_worksheet 'Invoices' do
+        xls_row do
+          @spreadsheet_data[:column_names].each do |column_name|
+          xls_cell(column_name)
+        end
+      end
+      @spreadsheet_data[:invoices_data].each do |invoice_data|
+        xls_row do
+          invoice_data.each do |data|
+            xls_cell(data)
+          end
+        end
+      end
+      
+    end
+    
+That's it! Have fun!
