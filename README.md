@@ -50,36 +50,10 @@ First, go to the controller and add the next to your respond_to section of your 
      respond_to do |format|
        format.html
        format.xls do
-          @spreadsheet_data = to_spreadsheet(@contacts)
+          @column_names=['name'. 'cif', 'phone', 'email', 'address', 'city']
           render 'app/views/contacts/index' #or your prefered view path
        end
      end
-    end
-
-    # private methods to define attributes you want to display
-    private
-    def to_spreadsheet(contacts)
-      # Column names
-      column_names = ['name', 'cif, 'address', 'town', 'country', 'phone', 'email']
-            
-      # Contacts' data
-      contacts_data = []
-      contacts.each do |contact|
-        contacts_data << contact_data_for(contact)
-      end
-      { column_names: column_names, contacts_data: contacts_data }
-    end
-        
-    def contact_data_for(contact)
-    [
-      contact.name,
-      contact.cif,
-      contact.address, 
-      contact.town,
-      contact.country,
-      contact.phone,
-      contact.email,
-    ]
     end
     
 Ok! Now is when the magic starts!
@@ -94,14 +68,18 @@ And inside it write:
     xls_workbook(xml) do #xml is the default xml builder object
       xls_worksheet 'Contacts' do
         xls_row do
-          @spreadsheet_data[:column_names].each do |column_name|
+          @column_names.each do |column_name|
           xls_cell(column_name)
         end
       end
-      @spreadsheet_data[:contacts_data].each do |contact_data|
+      @contacts.each do |contact|
         xls_row do
-          contact_data.each do |data|
-            xls_cell(data)
+            xls_cell(contact.data)
+            xls_cell(contact.cif)
+            xls_cell(contact.phone)
+            xls_cell(contact.email)
+            xls_cell(contact.address)
+            xls_cell(contact.city)
           end
         end
       end
@@ -111,42 +89,6 @@ Now you have to put a link in your index.html.erb or index.html.slim or whatever
 
     <%= link_to "Export Excel'97", contacts_path(format: :xls) %>
     
-And that's it!
+And that's it! Have fun!
 
-MULTIPLE WORKSHEETS:
-
-Is as easy as define new contents and redefine the index.xls.builder like this:
-
-    #inside index.xls.builder
-    xls_workbook(xml) do #xml is the default xml builder object
-      xls_worksheet 'Contacts' do
-        xls_row do
-          @spreadsheet_data[:column_names].each do |column_name|
-          xls_cell(column_name)
-        end
-      end
-      @spreadsheet_data[:contacts_data].each do |contact_data|
-        xls_row do
-          contact_data.each do |data|
-            xls_cell(data)
-          end
-        end
-      end
-      
-      xls_worksheet 'Invoices' do
-        xls_row do
-          @spreadsheet_data[:column_names].each do |column_name|
-          xls_cell(column_name)
-        end
-      end
-      @spreadsheet_data[:invoices_data].each do |invoice_data|
-        xls_row do
-          invoice_data.each do |data|
-            xls_cell(data)
-          end
-        end
-      end
-      
-    end
-    
-That's it! Have fun!
+For Multiple worksheets you just have to duplicate worksheet module.
