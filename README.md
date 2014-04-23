@@ -28,7 +28,6 @@ Usage
 
 XLS'97 is in fact a XML with some particular structure and that's why we are using XML Builder gem to implement the format. Xplosion is in fact a helper with some methods that abstract the tedious work of implementing the XML/XLS by hand.
 
-Imagine you want to create a workbook with a single worksheet with your contacts information. First of all you have to decide which of all contacts attributes you want to display. To do this, Rails uses a decorator which is a kind of helper more related to the view than to the controller, although it can be used in both sides. So, if you don't have already create a decorator lets hands on it.
 
 Xplosion have 4 methods:
 
@@ -40,9 +39,12 @@ Xplosion have 4 methods:
 Examples
 --------
 
+Imagine you want to create a workbook with a single worksheet with your contacts information. First of all you have to decide which of all contacts attributes you want to display and once you've decided it create a colum_names string array. That's the hardest decision you will have to make. Let the magic happens.
+
+
 SINGLE WORKSHEET:
 
-First, go to the controller and add the next to your respond_to section of your desired action (e.g. index), and some aditional methods that they may help defining the attributes you want to use:
+First, go to the controller and add the next to your respond_to section of your desired action (e.g. index):
 
     #inside contacts_controller.rb
     def index
@@ -50,7 +52,7 @@ First, go to the controller and add the next to your respond_to section of your 
      respond_to do |format|
        format.html
        format.xls do
-          @column_names=['name'. 'cif', 'phone', 'email', 'address', 'city']
+          @column_names=['name'. 'cif', 'phone', 'email', 'address', 'city'] #I have chosen this ones
           render 'app/views/contacts/index' #or your prefered view path
        end
      end
@@ -79,7 +81,7 @@ And inside it write:
             xls_cell(contact.phone)
             xls_cell(contact.email)
             xls_cell(contact.address)
-            xls_cell(contact.city)
+            xls_cell(contact.city) # Remember to fit column_names with number of cells
           end
         end
       end
