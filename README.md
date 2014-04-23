@@ -48,7 +48,7 @@ First, go to the controller and add the next to your respond_to section of your 
 
 OK! Now is when the magic starts!
 
-Just create the corresponding view in `app/views/contacts`, with the name `index.xsl.builder` and this content:
+Just create the corresponding view in `app/views/contacts`, with the name `index.xls.builder` and this content:
 
     xls_workbook(xml) do # xml is the default xml builder object
       xls_worksheet 'Contacts' do
