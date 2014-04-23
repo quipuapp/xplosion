@@ -91,4 +91,4 @@ Now you have to put a link in your index.html.erb or index.html.slim or whatever
     
 And that's it! Have fun!
 
-For Multiple worksheets you just have to duplicate worksheet module.
+For Multiple worksheets you just have to duplicate worksheet block.
