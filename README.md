@@ -30,7 +30,7 @@ Xplosion has 4 methods:
 * `xls_row`, which declares a new row.
 * `xls_cell(value)`, which declares a cell with a particular value.
 
-Examples
+Example
 ---------
 Imagine you want to create a workbook with a single worksheet with your contacts information. First of all you have to decide which of all contacts attributes you want to display and once you've decided it create a colum_names string array. That's the hardest decision you will have to make. Let the magic happens.
 
