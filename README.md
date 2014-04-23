@@ -109,7 +109,7 @@ And inside it write:
     
 Now you have to put a link in your index.html.erb or index.html.slim or whatever your view action lives:
 
-    <%= link_to "Export Excel'97", "/contacts/index.xls" %>
+    <%= link_to "Export Excel'97", contacts_path(format: :xls) %>
     
 And that's it!
 
